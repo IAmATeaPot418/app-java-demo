@@ -1,26 +1,75 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine.
-# See: https://circleci.com/docs/configuration-reference
 version: 2.1
 
-# Define a job to be invoked later in a workflow.
-# See: https://circleci.com/docs/configuration-reference/#jobs
+workflows:
+  version: 2
+  nightly:
+    triggers:
+      - schedule:
+          cron: "0 0 * * *"
+          filters:
+            branches:
+              only:
+                - main
+    jobs:
+      - build
+      - test-endorlabs-sca-scan:
+          requires:
+            - build
+      - test-endorlabs-secrets-commit
+      - test-endorlabs-secrets-full-history
+
 jobs:
-  say-hello:
-    # Specify the execution environment. You can specify an image from Docker Hub or use one of our convenience images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/configuration-reference/#executor-job
+  build:
     docker:
-      - image: cimg/base:stable
-    # Add steps to the job
-    # See: https://circleci.com/docs/configuration-reference/#steps
+      - image: maven:3.6.3-jdk-11 # Modify this image as needed for your build steps
     steps:
       - checkout
       - run:
-          name: "Say hello"
-          command: "echo Hello, World!"
+          name: "Build Your Project"
+          command: mvn clean install # Replace with your actual build steps
 
-# Orchestrate jobs using workflows
-# See: https://circleci.com/docs/configuration-reference/#workflows
-workflows:
-  say-hello-workflow:
-    jobs:
-      - say-hello
+  test-endorlabs-sca-scan:
+    docker:
+      - image: maven:3.6.3-jdk-11 # Modify this image as needed for your build tools
+    environment:
+      ENDORCTL_VERSION: "latest"
+      ENDOR_NAMESPACE: "demo"
+      DEBUG: "false"
+    steps:
+      - checkout
+      - run:
+          name: "Install endorctl"
+          command: |
+            apt-get update && apt-get install -y jq
+            if [ "$ENDORCTL_VERSION" == "latest" ]; then
+              echo "Downloading latest version of endorctl"
+              ENDORCTL_SHA=$(curl https://api.endorlabs.com/meta/version | jq -r '.ClientChecksums.ARCH_TYPE_LINUX_AMD64')
+              VERSION=$(curl https://api.endorlabs.com/meta/version | jq -r '.Service.Version')
+              curl https://storage.googleapis.com/endorlabs/"$VERSION"/binaries/endorctl_"$VERSION"_linux_amd64 -o endorctl
+              echo "$ENDORCTL_SHA  endorctl" | sha256sum -c
+              if [ $? -ne 0 ]; then
+                echo "Integrity check failed"
+                exit 1
+              fi
+            else
+              echo "Downloading version $ENDORCTL_VERSION of endorctl"
+              curl https://storage.googleapis.com/endorlabs/"$ENDORCTL_VERSION"/binaries/endorctl_"$ENDORCTL_VERSION"_linux_amd64 -o endorctl
+              echo "$ENDORCTL_SHA  endorctl" | sha256sum -c
+              if [ $? -ne 0 ]; then
+                echo "Integrity check failed for the pinned version of endorctl. Please ensure the environment variable is set and re-run the job"
+                exit 1
+              fi
+            fi
+            chmod +x ./endorctl
+      - run:
+          name: "Endor Labs SCA Scan"
+          command: |
+            ./endorctl scan
+
+  test-endorlabs-secrets-commit:
+    steps:
+      - run: echo "hello world"
+
+  test-endorlabs-secrets-full-history:
+    steps:
+      - run: echo "hello world"
