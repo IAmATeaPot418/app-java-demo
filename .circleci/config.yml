@@ -62,9 +62,11 @@ jobs:
             ./endorctl scan
 
   test-endorlabs-secrets-commit:
+    executor: shell
     steps:
       - run: echo "hello world"
 
   test-endorlabs-secrets-full-history:
+    executor: shell
     steps:
       - run: echo "hello world"
