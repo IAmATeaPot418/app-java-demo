@@ -15,8 +15,6 @@ workflows:
       - test-endorlabs-sca-scan:
           requires:
             - build
-      - test-endorlabs-secrets-commit
-      - test-endorlabs-secrets-full-history
 
 jobs:
   build:
@@ -64,12 +62,13 @@ jobs:
       - run:
           name: "Endor Labs SCA Scan"
           command: |
-            ./endorctl scan
-
-  test-endorlabs-secrets-commit:
-    steps:
-      - run: echo "hello world"
-
-  test-endorlabs-secrets-full-history:
-    steps:
-      - run: echo "hello world"
+            if [ "$DEBUG" == "true" ]; then
+              export ENDOR_LOG_VERBOSE=true
+              export ENDOR_LOG_LEVEL=debug
+            fi
+            if [ "$CIRCLE_BRANCH" == "$CIRCLE_DEFAULT_BRANCH" ]; then
+              export ENDOR_AS_DEFAULT_BRANCH=true
+              export ENDOR_SCAN_DETACHED_REF_NAME="$CIRCLE_BRANCH"
+            else
+              export ENDOR_CI_RUN=true
+            fi
