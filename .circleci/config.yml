@@ -10,10 +10,10 @@ jobs:
           name: "Build Your Project"
           command: mvn clean install # Replace with your actual build steps
       - persist_to_workspace:
-          root: .m2
+          root: .
           paths:
             - ~/.m2
-
+            - target
   test-endorlabs-sca-scan:
     docker:
       - image: maven:3.6.3-jdk-11 # Modify this image as needed for your build tools
@@ -24,7 +24,9 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: .m2
+          at: .m2  # Attatch the cached dependencies from the build step.
+      - attach_workspace:
+          at: target # Attach the target directory from the workspace.      
       - run:
           name: "Install endorctl"
           command: |
