@@ -47,8 +47,9 @@ jobs:
             fi
             chmod +x ./endorctl
             ./endorctl --version
-            ls -ltr .m2
-            ls -ltr target
+            ls -ltr target/
+            ls -ltr .m2/
+            ls -ltr target/
       - run:
           name: "Endor Labs SCA Scan"
           command: |
