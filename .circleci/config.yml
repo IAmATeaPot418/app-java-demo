@@ -53,3 +53,15 @@ jobs:
             ./endorctl scan
       - run:
           name: "Use the built artifact"
+          command: |
+            # Use the artifact from the target directory as needed in this step
+
+workflows:
+  build_and_test:
+    jobs:
+      - build
+      - test-endorlabs-sca-scan:
+          requires:
+            - build
+          context:
+            - endorlabs
