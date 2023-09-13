@@ -64,13 +64,12 @@ jobs:
             chmod +x ./endorctl
             ./endorctl --version
       - when:
-          condition:
-            equal: [ main, << pipeline.git.branch >> ]
+          condition: [ main, << pipeline.git.branch >> ]
           steps:
             - run: ./endorctl scan --enable=git,analytics,secrets
       - when:
           condition:
-            not_equal: [ main, << pipeline.git.branch >> ]
+            not: [ main, << pipeline.git.branch >> ]
           steps:
             - run: ./endorctl scan --ci-run --enable=git,analytics,secrets --ci-baseline=main
 
