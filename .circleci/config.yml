@@ -63,10 +63,17 @@ jobs:
             fi
             chmod +x ./endorctl
             ./endorctl --version
-      - run:
-          name: "Endor Labs SCA Scan"
-          command: |
-            ./endorctl scan
+      - when:
+          condition:
+            equal: [ main, << pipeline.git.branch >> ]
+          steps:
+            - run: ./endorctl scan --enable=git,analytics,secrets
+      - when:
+          condition:
+            not_equal: [ main, << pipeline.git.branch >> ]
+          steps:
+            - run: ./endorctl scan --ci-run --enable=git,analytics,secrets --ci-baseline=main
+
 workflows:
   build_and_test:
     jobs:
