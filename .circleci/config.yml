@@ -1,20 +1,5 @@
 version: 2.1
 
-workflows:
-  nightly:
-    triggers:
-      - schedule:
-          cron: "0 0 * * *"
-          filters:
-            branches:
-              only:
-                - main
-    jobs:
-      - build
-      - test-endorlabs-sca-scan:
-          requires:
-            - build
-
 jobs:
   build:
     docker:
@@ -58,3 +43,11 @@ jobs:
           name: "Endor Labs SCA Scan"
           command: |
             ./endorctl scan
+
+workflows:
+  build_and_test:
+    jobs:
+      - build
+      - test-endorlabs-sca-scan:
+          requires:
+            - build
