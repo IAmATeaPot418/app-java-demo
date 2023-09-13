@@ -37,13 +37,13 @@ jobs:
               echo "Downloading version $ENDORCTL_VERSION of endorctl"
               curl https://storage.googleapis.com/endorlabs/"$ENDORCTL_VERSION"/binaries/endorctl_"$ENDORCTL_VERSION"_linux_amd64 -o endorctl
               # You need to set ENDORCTL_SHA here if you are using it in the integrity check
-              chmod +x ./endorctl
             fi
+            chmod +x ./endorctl
+            ./endorctl --version
       - run:
           name: "Endor Labs SCA Scan"
           command: |
             ./endorctl scan
-
 workflows:
   build_and_test:
     jobs:
