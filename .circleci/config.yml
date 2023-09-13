@@ -9,6 +9,10 @@ jobs:
       - run:
           name: "Build Your Project"
           command: mvn clean install # Replace with your actual build steps
+      - persist_to_workspace:
+          root: .m2
+          paths:
+            - ~/.m2
 
   test-endorlabs-sca-scan:
     docker:
@@ -19,6 +23,8 @@ jobs:
       DEBUG: "false"
     steps:
       - checkout
+      - attach_workspace:
+          at: .m2
       - run:
           name: "Install endorctl"
           command: |
@@ -44,6 +50,7 @@ jobs:
           name: "Endor Labs SCA Scan"
           command: |
             ./endorctl scan
+
 workflows:
   build_and_test:
     jobs:
