@@ -15,7 +15,7 @@ jobs:
       - image: maven:3.6.3-jdk-11 # Modify this image as needed for your build tools
     environment:
       ENDORCTL_VERSION: "latest"
-      ENDOR_NAMESPACE: "demo"
+      ENDOR_NAMESPACE: "yolo"
       DEBUG: "false"
     steps:
       - checkout
@@ -51,3 +51,5 @@ workflows:
       - test-endorlabs-sca-scan:
           requires:
             - build
+          contexts:
+            - endorlabs
