@@ -1,5 +1,10 @@
 version: 2.1
 
+executors:
+  shell-executor:
+    docker:
+      - image: cimg/base:2021.08
+
 workflows:
   nightly:
     triggers:
@@ -62,11 +67,11 @@ jobs:
             ./endorctl scan
 
   test-endorlabs-secrets-commit:
-    executor: shell
+    executor: shell-executor
     steps:
       - run: echo "hello world"
 
   test-endorlabs-secrets-full-history:
-    executor: shell
+    executor: shell-executor
     steps:
       - run: echo "hello world"
