@@ -49,8 +49,8 @@ jobs:
       - run:
           name: "Endor Labs SCA Scan"
           command: |
+            ls -ltr ~/.m2
             ./endorctl scan
-
 workflows:
   build_and_test:
     jobs:
