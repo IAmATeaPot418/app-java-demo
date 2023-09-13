@@ -6,17 +6,25 @@ jobs:
       - image: maven:3.6.3-jdk-11 # Modify this image as needed for your build steps
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            # when lock file changes, use increasingly general patterns to restore cache
+            - maven-repo-v1-{{ .Branch }}-{{ checksum "pom.xml" }}
+            - maven-repo-v1-{{ .Branch }}-
+            - maven-repo-v1-
       - run:
           name: "Build Your Project"
           command: |
             mvn clean install # Replace with your actual build steps
-            ls -ltr .m2
-            ls -ltr target
       - persist_to_workspace:
           root: .
           paths:
-            - .m2/
-            - target/ # Persist the target directory
+            - target/ # Persist artifact across job
+      - save_cache:
+          paths:
+            - ~/.m2/repository
+          key: maven-repo-v1-{{ .Branch }}-{{ checksum "pom.xml" }}
+
 
   test-endorlabs-sca-scan:
     docker:
@@ -29,6 +37,12 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
+      - restore_cache:
+          keys:
+            # when lock file changes, use increasingly general patterns to restore cache
+            - maven-repo-v1-{{ .Branch }}-{{ checksum "pom.xml" }}
+            - maven-repo-v1-{{ .Branch }}-
+            - maven-repo-v1-
       - run:
           name: "Install endorctl"
           command: |
