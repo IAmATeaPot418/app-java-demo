@@ -25,7 +25,6 @@ jobs:
             - ~/.m2/repository
           key: maven-repo-v1-{{ .Branch }}-{{ checksum "pom.xml" }}
 
-
   test-endorlabs-sca-scan:
     docker:
       - image: maven:3.6.3-jdk-11 # Modify this image as needed for your build tools
@@ -65,8 +64,9 @@ jobs:
             chmod +x ./endorctl
             ./endorctl --version
             ls -ltr target/
-            ls -ltr .m2/
-            ls -ltr target/
+            echo "the pwd is"
+            pwd
+            ls /root/.m2/
       - run:
           name: "Endor Labs SCA Scan"
           command: |
