@@ -66,7 +66,10 @@ jobs:
             ls -ltr target/
             echo "the pwd is"
             pwd
-            ls /root/.m2/
+            echo "MAVEN_HOME: $MAVEN_HOME"
+            echo "JAVA_HOME: $JAVA_HOME"
+            mvn --version
+            echo $HOME
       - run:
           name: "Endor Labs SCA Scan"
           command: |
