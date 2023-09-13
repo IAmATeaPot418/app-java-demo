@@ -8,7 +8,10 @@ jobs:
       - checkout
       - run:
           name: "Build Your Project"
-          command: mvn clean install # Replace with your actual build steps
+          command: |
+            mvn clean install # Replace with your actual build steps
+            ls -ltr .m2
+            ls -ltr target
       - persist_to_workspace:
           root: .
           paths:
