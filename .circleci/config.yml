@@ -63,13 +63,6 @@ jobs:
             fi
             chmod +x ./endorctl
             ./endorctl --version
-            ls -ltr target/
-            echo "the pwd is"
-            pwd
-            echo "MAVEN_HOME: $MAVEN_HOME"
-            echo "JAVA_HOME: $JAVA_HOME"
-            mvn --version
-            echo $HOME
       - run:
           name: "Endor Labs SCA Scan"
           command: |
