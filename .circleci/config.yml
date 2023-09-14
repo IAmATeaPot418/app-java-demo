@@ -111,17 +111,17 @@ jobs:
           command: |
             ./endorctl scan --enable=git,secrets,analytics
 workflows:
-  build_and_endorlabs_test:
+  build_and_endorlabs_watch:
     when:
       equal: [ main, << pipeline.git.branch >> ]
     jobs:
       - build
-      - watch-endorlabs-scan:
+      - test-endorlabs-scan:
           requires:
             - build
           context:
             - endorlabs
-  build_and_endorlabs_watch:
+  build_and_endorlabs_test:
     when:
       not_equal: [ main, << pipeline.git.branch >> ]
     jobs:
