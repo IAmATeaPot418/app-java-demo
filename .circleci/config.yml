@@ -116,14 +116,12 @@ workflows:
       equal: [ main, << pipeline.git.branch >> ]
     jobs:
       - build
-      - test-endorlabs-scan:
+      - watch-endorlabs-scan:
           requires:
             - build
           context:
             - endorlabs
   build_and_endorlabs_test:
-    when:
-      not_equal: [ main, << pipeline.git.branch >> ]
     jobs:
       - build
       - test-endorlabs-scan:
